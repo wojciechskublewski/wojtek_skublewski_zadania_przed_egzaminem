@@ -12,7 +12,10 @@
     <title>cookie</title>
 </head>
 <body>
-    <a href="/homepagesetcookie">Ta strona zawiera pliki cookies jak w nia klikniesz zaakeptujesz</a>
+
+    <c:if test="${link==false}"><a href="/homepagesetcookie">Ta strona zawiera pliki cookies jak w nia klikniesz zaakeptujesz</a><br></c:if>
+    <c:if test="${link==true}">Cookies all good</a><br></c:if>
+
 
 </body>
 </html>

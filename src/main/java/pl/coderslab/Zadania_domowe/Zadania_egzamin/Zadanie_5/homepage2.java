@@ -8,21 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/delCookieApproved")
-public class DeleteCookie extends HttpServlet {
+@WebServlet("/homepage2")
+public class homepage2 extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
-        String cookieVal="approved";
-        for (Cookie c : cookies){
-            if(cookieVal.equals(c.getValue())){
-                c.setMaxAge(0);
-                response.addCookie(c);
-                response.getWriter().append("deleted");
-            }
-        }
+        request.setAttribute("cookie",cookies);
+        getServletContext().getRequestDispatcher("/homepage2.jsp");
+
     }
 }

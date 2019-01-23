@@ -24,12 +24,9 @@ public class homepage extends HttpServlet {
                 break;
             }
         }
-
-        if (isApp==false) {
+            request.setAttribute("link",isApp);
             getServletContext().getRequestDispatcher("/homepage.jsp").forward(request, response);
-        } else {
-            getServletContext().getRequestDispatcher("/homepagewithout.jsp").forward(request, response);
+
         }
 
-    }
 }
