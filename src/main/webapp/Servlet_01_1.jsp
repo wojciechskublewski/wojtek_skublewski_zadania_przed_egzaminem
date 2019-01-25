@@ -12,6 +12,15 @@
     <title>Title</title>
 </head>
 <body>
-        ${czesc}, ${lang}
+        ${czesc},
+    <c:if test="${isCookie==false}">
+        wybierz jezyk: <br>
+    <form action="/Servlet_01_2" method="post">
+        <c:forEach items="${langMap}" var="langMap">
+            <input type="radio" name="language" value="${langMap.key}"> ${langMap} <br>
+        </c:forEach>
+        <input type="submit">
+    </form>
+    </c:if>
 </body>
 </html>

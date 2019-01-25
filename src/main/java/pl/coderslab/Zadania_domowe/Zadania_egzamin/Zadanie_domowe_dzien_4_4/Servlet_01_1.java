@@ -14,29 +14,31 @@ public class Servlet_01_1 extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Cookie cookie = new Cookie("lang", "de");
-        response.addCookie(cookie);
+
+
         Map<String, String> lang = new HashMap<>();
         lang.put("en", "Hello");
         lang.put("pl", "Cześć");
         lang.put("de", "Ehre");
         lang.put("es", "Hola");
         lang.put("fr", "Bienvenue");
-
-
-        HttpSession session = request.getSession();
-
-        session.setAttribute("lang", lang);
+        boolean isCookie = false;
+        request.setAttribute("langMap",lang);
 
         Cookie[] cookies = request.getCookies();
         String language = "lang";
         for (Cookie c : cookies) {
             if(language.equals(c.getName())) {
-                request.setAttribute("lang", c.getValue());
+                isCookie = true;
                 request.setAttribute("czesc", lang.get(c.getValue()));
+                request.setAttribute("isCookie", isCookie);
                 getServletContext().getRequestDispatcher("/Servlet_01_1.jsp").forward(request,response);
             }
-
+        }
+        if (isCookie==false) {
+            request.setAttribute("czesc","Czesc");
+            request.setAttribute("isCookie", isCookie);
+            getServletContext().getRequestDispatcher("/Servlet_01_1.jsp").forward(request,response);
         }
     }
 }
