@@ -10,11 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+
 
 @WebServlet("/Airport_1")
 public class Airport_1 extends HttpServlet {
+    private static final String DATE_FORMAT = "dd-M-yyyy hh:mm:ss a";
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String nameArr = request.getParameter("nameArr");
         String nameDep = request.getParameter("nameDep");
@@ -40,16 +47,53 @@ public class Airport_1 extends HttpServlet {
             if (priceDouble<=0) {
                 comment = comment+"cena biletu jest zero lub mniejsza od zera" +"\n";
             }
-
         }
 
         if (StringUtils.isNotBlank(comment)) {
             isComm = true;
             request.setAttribute("comment", comment);
+            request.setAttribute("isComm", isComm);;
+            getServletContext().getRequestDispatcher("/airport.jsp").forward(request,response);
         }
 
-        request.setAttribute("isComm", isComm);;
-        getServletContext().getRequestDispatcher("/airport.jsp").forward(request,response);
+        String timeZoneDep = "";
+        String timeZoneArr = "";
+        HttpSession session = request.getSession();
+
+        List<Airport> airportList = (List<Airport>) session.getAttribute("airportList");
+
+        for (int i=0; i<airportList.size(); i++){
+            if(airportList.get(i).getName().equals(nameDep)){
+                timeZoneDep = airportList.get(i).getTimezone();
+                break;
+            }
+        }
+        for (int  i =0; i<airportList.size(); i++) {
+            if(airportList.get(i).getName().equals(nameArr)){
+                timeZoneArr = airportList.get(i).getTimezone();
+                break;
+            }
+        }
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+        LocalDateTime ldt = LocalDateTime.parse(timeDep);
+
+        ZoneId DepZoneId = ZoneId.of(timeZoneDep);
+        ZoneId ArrZoneId = ZoneId.of(timeZoneArr);
+
+        ZonedDateTime zonedDateTimeDep = ldt.atZone(DepZoneId);
+        String timeDepUp = format.format(zonedDateTimeDep);
+
+
+        ZonedDateTime zonedDateTimeArr = zonedDateTimeDep.withZoneSameInstant(ArrZoneId);
+        zonedDateTimeArr= zonedDateTimeArr.plusHours(Integer.parseInt(hours));
+        String timeArr = format.format(zonedDateTimeArr);
+
+        response.getWriter().append(timeZoneDep).append(", ").append(timeZoneArr).append(", ").append(timeDep).append(",         ").append(timeDepUp).append(",     ")
+        .append(timeArr);
+
+
 
     }
 
@@ -57,7 +101,7 @@ public class Airport_1 extends HttpServlet {
 
         HttpSession session = request.getSession();
         List<Airport> airportList;
-
+        boolean isComm = false;
         if(session.isNew()|| (List<Airport>)session.getAttribute("airportList")==null){
             airportList = new ArrayList<>();
             airportList = AirportDao.getList();
@@ -65,7 +109,7 @@ public class Airport_1 extends HttpServlet {
         } else {
             airportList = (List<Airport>) session.getAttribute("airportList");
          }
-
+         request.setAttribute("isComm", isComm);
          request.setAttribute("airportList",airportList);
         getServletContext().getRequestDispatcher("/airport.jsp").forward(request,response);
 
