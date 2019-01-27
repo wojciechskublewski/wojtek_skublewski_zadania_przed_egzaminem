@@ -12,6 +12,16 @@
     <title>airport</title>
 </head>
 <body>
+
+
+        ${comment}<br>
+        ${isComm}<br>
+
+        <c:if test="${isComm==true}">
+            dupppaaaa
+        </c:if>
+
+
     <form action="/Airport_1" method="post">
         <label>Wybierz lotnisko odlotu:
         <select name="nameDep"><br>
